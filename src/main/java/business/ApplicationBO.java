@@ -2,6 +2,7 @@ package business;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +31,15 @@ public class ApplicationBO {
 				pt.getListCB().add(gt_2);
 			}
 		}
-
+		
+		if(iCbs.hasNext()) Collections.shuffle(pts);
+		
+		while(iCbs.hasNext()) {
+			for (PhongThi pt : pts) {
+				if(iCbs.hasNext()) pt.getListCB().add(iCbs.next());
+			}
+		}
+		
 		return pts;
 	}
 

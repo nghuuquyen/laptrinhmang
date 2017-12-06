@@ -3,6 +3,7 @@ package utils;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -11,6 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import models.CanBo;
 import models.PhongThi;
 
 public class WriteExcelFile {
@@ -38,23 +40,39 @@ public class WriteExcelFile {
 
 	private void writePT(PhongThi pt, Row row) {
 		Cell cell = row.createCell(0);
-
+		Iterator<CanBo> iCbs = pt.getListCB().iterator();
+		
 		// Ma phong thi
 		cell.setCellValue(pt.getMaPhongThi());
 
 		// Giam thi 1
 		cell = row.createCell(1);
-		cell.setCellValue(pt.getListCB().get(0).getHoTen());
+		CanBo gt1 = iCbs.next();
+		cell.setCellValue(gt1.getHoTen());
 
 		cell = row.createCell(2);
-		cell.setCellValue(pt.getListCB().get(0).getMaSo());
+		cell.setCellValue(gt1.getMaSo());
 
 		// Giam thi 2
 		cell = row.createCell(3);
-		cell.setCellValue(pt.getListCB().get(1).getHoTen());
+		CanBo gt2 = iCbs.next();
+		cell.setCellValue(gt2.getHoTen());
 
 		cell = row.createCell(4);
-		cell.setCellValue(pt.getListCB().get(1).getMaSo());
+		cell.setCellValue(gt2.getMaSo());
+		
+		int i = 5;
+		
+		while(iCbs.hasNext()) {
+			CanBo gk = iCbs.next();
+			cell = row.createCell(i);
+			cell.setCellValue(gk.getHoTen());
+			
+			cell = row.createCell(i+1);
+			cell.setCellValue(gk.getMaSo());
+			
+			i = i + 2;
+		}
 	}
 
 	public void writeExcel(List<PhongThi> listPT, String excelFilePath) throws IOException {
