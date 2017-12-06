@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,7 @@ public class ReadExcelFile {
 		return null;
 	}
 
-	public List<CanBo> getListCB(FileInputStream inputStream) {
+	public List<CanBo> getListCB(InputStream inputStream) {
 		List<CanBo> listCB = new ArrayList<>();
 		try {
 			workbook = new XSSFWorkbook(inputStream);
@@ -87,7 +88,7 @@ public class ReadExcelFile {
 		return listCB;
 	}
 
-	public List<PhongThi> getListPT(FileInputStream inputStream) {
+	public List<PhongThi> getListPT(InputStream inputStream) {
 		List<PhongThi> listPT = new ArrayList<>();
 		try {
 			workbook = new XSSFWorkbook(inputStream);

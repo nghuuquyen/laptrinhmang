@@ -1,6 +1,6 @@
 package business;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import utils.ReadExcelFile;
 public class PhongThiManager {
 	List<PhongThi> listPT;
 
-	public PhongThiManager(FileInputStream inputStream) {
+	public PhongThiManager(InputStream inputStream) {
 		ReadExcelFile reader = new ReadExcelFile();
 		listPT = reader.getListPT(inputStream);
 	}

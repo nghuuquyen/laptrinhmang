@@ -1,6 +1,6 @@
 package business;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import utils.ReadExcelFile;
 public class CanBoManager {
 	List<CanBo> listCB;
 	
-	public CanBoManager(FileInputStream inputStream) {
+	public CanBoManager(InputStream inputStream) {
 		ReadExcelFile reader = new ReadExcelFile();
 		listCB = reader.getListCB(inputStream);
 	}
