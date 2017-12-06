@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import business.CanBoManager;
+import business.PhongThiManager;
 import models.CanBo;
 import models.PhongThi;
 
@@ -24,7 +26,7 @@ public class ReadExcelFile {
 
 	private static Object getCellValue(Cell cell) {
 		DataFormatter formatter = new DataFormatter();
-
+		
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_STRING:
 			return cell.getStringCellValue();
@@ -126,16 +128,46 @@ public class ReadExcelFile {
 		return listPT;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		ReadExcelFile app = new ReadExcelFile();
-		
+
 		try {
-			List<CanBo> cbs = app.getListCB(new FileInputStream(new File(FILE_NAME)));
-			List<PhongThi> pts = app.getListPT(new FileInputStream(new File(FILE_NAME)));
+			CanBoManager cbMgm = new CanBoManager(new FileInputStream(new File(FILE_NAME)));
+			PhongThiManager ptMgm = new PhongThiManager(new FileInputStream(new File(FILE_NAME)));
+
+			List<CanBo> cbs = cbMgm.getRandomListCB();
+			List<PhongThi> pts = ptMgm.getRandomListPT();
 			
-			System.out.println(cbs.size());
-			System.out.println(pts.size());
+			System.out.println("So Phong Thi: " + pts.size());
+			System.out.println("So Can Bo: " + cbs.size());
+			
+			if (pts.size() * 2 > cbs.size()) {
+				throw new Exception("So Can Bo Khong Du Cho Phong Thi");
+			}
+
+			Iterator<CanBo> iCbs = cbs.iterator();
+
+			for (PhongThi pt : pts) {
+				if (iCbs.hasNext()) {
+					CanBo gt_1 = iCbs.next();
+					gt_1.setRole("GT_1");
+					pt.getListCB().add(gt_1);
+				}
+
+				if (iCbs.hasNext()) {
+					CanBo gt_2 = iCbs.next();
+					gt_2.setRole("GT_2");
+					pt.getListCB().add(gt_2);
+				}
+				
+				System.out.println("--------------------------");
+				System.out.println(pt);
+				for (CanBo cb : pt.getListCB()) {
+					System.out.println(cb);
+				}
+				System.out.println("--------------------------");
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
