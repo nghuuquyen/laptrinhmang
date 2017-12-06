@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -25,9 +24,8 @@ public class ReadExcelFile {
 	private static final String FILE_NAME = "/tmp/ds_canbo_va_phongthi.xlsx";
 	private static Workbook workbook;
 
+	@SuppressWarnings("deprecation")
 	private static Object getCellValue(Cell cell) {
-		DataFormatter formatter = new DataFormatter();
-		
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_STRING:
 			return cell.getStringCellValue();
@@ -79,6 +77,8 @@ public class ReadExcelFile {
 
 				listCB.add(cb);
 			}
+			
+			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -120,6 +120,8 @@ public class ReadExcelFile {
 
 				listPT.add(pt);
 			}
+			
+			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -130,19 +132,16 @@ public class ReadExcelFile {
 	}
 
 	public static void main(String[] args) throws Exception {
-
-		ReadExcelFile app = new ReadExcelFile();
-
 		try {
 			CanBoManager cbMgm = new CanBoManager(new FileInputStream(new File(FILE_NAME)));
 			PhongThiManager ptMgm = new PhongThiManager(new FileInputStream(new File(FILE_NAME)));
-
+			
 			List<CanBo> cbs = cbMgm.getRandomListCB();
 			List<PhongThi> pts = ptMgm.getRandomListPT();
-			
+
 			System.out.println("So Phong Thi: " + pts.size());
 			System.out.println("So Can Bo: " + cbs.size());
-			
+
 			if (pts.size() * 2 > cbs.size()) {
 				throw new Exception("So Can Bo Khong Du Cho Phong Thi");
 			}
@@ -161,14 +160,18 @@ public class ReadExcelFile {
 					gt_2.setRole("GT_2");
 					pt.getListCB().add(gt_2);
 				}
-				
+
 				System.out.println("--------------------------");
 				System.out.println(pt);
 				for (CanBo cb : pt.getListCB()) {
 					System.out.println(cb);
 				}
 				System.out.println("--------------------------");
+
 			}
+
+			WriteExcelFile writer = new WriteExcelFile();
+			writer.writeExcel(pts, "/tmp/output.xlsx");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

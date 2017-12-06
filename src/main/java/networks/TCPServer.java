@@ -9,8 +9,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
+import business.ApplicationBO;
 import business.CanBoManager;
+import business.PhongThiManager;
+import models.CanBo;
+import models.PhongThi;
 
 public class TCPServer {
 	private static ServerSocket server;
@@ -62,23 +67,36 @@ public class TCPServer {
 				FileOutputStream fos = new FileOutputStream(FILE_NAME);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				
+				// Read file size send from client.
 				long fileSize = dataIn.readLong();
 				
 				byte[] bytes = new byte[(int) fileSize];
 				int count = dataIn.read(bytes);
 				
+				// Read and save to file with correct file size.
 				bos.write(bytes, 0, count);
-				
 				bos.close();
-
-				CanBoManager cbMgm = new CanBoManager(new FileInputStream(new File(FILE_NAME)));
-				System.out.println("CB Size: " + cbMgm.getRandomListCB().size());
-
-				DataOutputStream dos = new DataOutputStream(soc.getOutputStream());
-				dos.writeUTF("Can Bo Size: " + cbMgm.getRandomListCB().size());
+				fos.close();
 				
+				// Load data from excel file to Java object.
+				CanBoManager cbMgm = new CanBoManager(new FileInputStream(new File(FILE_NAME)));
+				PhongThiManager ptMgm = new PhongThiManager(new FileInputStream(new File(FILE_NAME)));
+				
+				// Do get shuffle both lists.
+				List<CanBo> cbs = cbMgm.getRandomListCB();
+				List<PhongThi> pts = ptMgm.getRandomListPT();
+				
+				// Application business logic
+				ApplicationBO app = new ApplicationBO();
+				
+				// Random can bo into random phong thi.
+				pts = app.chiaPhongThi(cbs, pts);
+				DataOutputStream dos = new DataOutputStream(soc.getOutputStream());
+				
+				// Write back stream output file to client.
+				app.writeDataToFile(pts, dos);
 				soc.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
