@@ -1,8 +1,8 @@
 package networks;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,22 +29,23 @@ public class TCPClient {
 	static void sendFile(Socket socket) {
 		FileInputStream fis;
 		BufferedInputStream bis;
-		BufferedOutputStream out;
 		byte[] buffer = new byte[1024 * 15];
 		try {
-			fis = new FileInputStream(new File(FILE_NAME));
+			File f = new File(FILE_NAME);
+			fis = new FileInputStream(f);
 			bis = new BufferedInputStream(fis);
-			out = new BufferedOutputStream(socket.getOutputStream());
-			int count;
-			while ((count = bis.read(buffer)) > 0) {
-				out.write(buffer, 0, count);
-			}
 			
-			// TODO: Truyen ky hieu ngat file.
+			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			int count;
+			
+			dos.writeLong(f.length());
+			
+			while ((count = bis.read(buffer)) > 0) {
+				dos.write(buffer, 0, count);
+			}
 			
 			fis.close();
 			bis.close();
-			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
